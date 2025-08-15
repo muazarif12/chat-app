@@ -18,7 +18,7 @@ export const useChatStore = create((set)=>({
         } catch (error) {
             toast.error(error.response.data.message);
         }finally{
-            set({isUserLoading: false});
+            set({isUsersLoading: false});
         } 
     },
 
@@ -33,5 +33,7 @@ export const useChatStore = create((set)=>({
         }finally{
             set({isMessagesLoading: false});
         }
-    }
+    },
+    // todo: optimize it later
+    setSelectedUser: async(selectedUser) => set({selectedUser}),
 }))

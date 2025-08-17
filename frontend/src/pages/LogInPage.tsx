@@ -12,7 +12,7 @@ const LogInPage = () => {
   });
 
   
-  const {login, isLoggingIn} = useAuthStore();
+  const {login, isLogingIn} = useAuthStore();
 
   const handleSubmit = async (e) => {
 
@@ -88,8 +88,8 @@ const LogInPage = () => {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full" disabled={isLoggingIn}>
-              {isLoggingIn ? (
+            <button type="submit" className="btn btn-primary w-full" disabled={isLogingIn}>
+              {isLogingIn ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
                   Loading...

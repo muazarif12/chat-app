@@ -5,7 +5,7 @@ import { useState } from "react";
 const ProfilePage = () => {
 
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore()
-  const [selectedImage, setSelectedImage] = useState(null)
+  const [selectedImage, setSelectedImage] = useState("")
 
   const handleImageUpload = async (e) => {
 
@@ -19,10 +19,10 @@ const ProfilePage = () => {
     reader.readAsDataURL(file);
 
     reader.onload = async () => {
-      const base64Image = reader.result;
-      console.log('Base64 image length:', base64Image.length); // Debug
+      const base64Image = reader.result as string;
+      // console.log('Base64 image length:', base64Image.length); // Debug
 
-      setSelectedImage(base64Image)
+      setSelectedImage(base64Image as string)
       await updateProfile({ profilePic: base64Image })
     }
   }
@@ -41,7 +41,7 @@ const ProfilePage = () => {
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <img
-                src={selectedImage || authUser.profilePic || "/avatar.png"}
+                src={selectedImage || authUser?.profilePic || "/avatar.png"}
                 alt="Profile"
                 className="size-32 rounded-full object-cover border-4 "
               />

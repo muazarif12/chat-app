@@ -2,9 +2,10 @@ import { create } from "zustand"
 import toast from "react-hot-toast"
 import { axiosInstance } from "../lib/axios"
 import { useAuthStore } from "./useAuthStore";
+import {type ChatStore } from "../interfaces/types.ts";
 
 
-export const useChatStore = create((set, get) => ({
+export const useChatStore = create<ChatStore>((set, get) => ({
     messages: [],
     users: [],
     selectedUser: null,
@@ -42,7 +43,7 @@ export const useChatStore = create((set, get) => ({
         if (!selectedUser) return;
 
         const socket = useAuthStore.getState().socket;
-        socket.on("newMessage", (newMessage) => {
+        socket?.on("newMessage", (newMessage) => {
             const isMessageSentFromSelectedUser = newMessage.senderId !== selectedUser._id;
             if (!isMessageSentFromSelectedUser) return;
 
@@ -54,13 +55,13 @@ export const useChatStore = create((set, get) => ({
 
     unsubscribeFromMessages: () => {
         const socket = useAuthStore.getState().socket;
-        socket.off("newMessage");
+        socket?.off("newMessage");
     },
 
-    sendMessage: async (messageData) => {
+    sendMessage: async (messageData: {text:string, image: string|null}) => {
         const { selectedUser, messages } = get()
         try {
-            const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
+            const res = await axiosInstance.post(`/messages/send/${selectedUser?._id}`, messageData);
             set({ messages: [...messages, res.data] })
         } catch (error) {
             toast.error(error.response.data.message);

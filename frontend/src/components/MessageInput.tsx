@@ -1,11 +1,12 @@
 import { useRef, useState } from "react"
+import toast from "react-hot-toast"
 import { useChatStore } from "../store/useChatStore";
 import { Image, Send, X } from "lucide-react";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
-  const [imagePreview, setImagePreview] = useState(null);
-  const fileInputRef = useRef(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { sendMessage } = useChatStore();
 
   const handleImageChange = (e) => {
@@ -17,14 +18,14 @@ const MessageInput = () => {
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImagePreview(reader.result);
+      setImagePreview(reader.result as string);
     };
 
     reader.readAsDataURL(file)
   };
 
   const removeImage = () => {
-    setImagePreview(null);
+    setImagePreview("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
@@ -40,7 +41,7 @@ const MessageInput = () => {
 
       // Clear form
       setText("");
-      setImagePreview(null);
+      setImagePreview("");
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       console.error("Failed to send message:", error);

@@ -10,19 +10,20 @@ const ChatContainer = () => {
 
   const { messages, getMessages, isMessagesLoading, selectedUser, subscribeToMessages, unsubscribeFromMessages } = useChatStore();
   const { authUser } = useAuthStore();
-  const messageEndRef = useRef(null);
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getMessages(selectedUser._id)
+    if (!selectedUser) return; 
 
+    getMessages(selectedUser._id)
     subscribeToMessages()
 
     return () => unsubscribeFromMessages();
-  }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages])
+  }, [selectedUser?._id, getMessages, subscribeToMessages, unsubscribeFromMessages])
 
   useEffect(() => {
     if(messageEndRef.current && messages){
-    messageEndRef.current.scrollIntoView({ behaviour: "smooth" });
+    messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages])
   
@@ -47,16 +48,16 @@ const ChatContainer = () => {
           <div
             key={message._id}
 
-            className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
+            className={`chat ${message.senderId === authUser?._id ? "chat-end" : "chat-start"}`}
             ref={messageEndRef}
           >
             <div className=" chat-image avatar">
               <div className="size-10 rounded-full border">
                 <img
                   src={
-                    message.senderId === authUser._id
-                      ? authUser.profilePic || "/avatar.png"
-                      : selectedUser.profilePic || "/avatar.png"
+                    message.senderId === authUser?._id
+                      ? authUser?.profilePic || "/avatar.png"
+                      : selectedUser?.profilePic || "/avatar.png"
                   }
                   alt="profile pic"
                 />

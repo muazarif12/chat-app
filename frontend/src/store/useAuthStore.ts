@@ -2,8 +2,9 @@ import { create } from "zustand"
 import { axiosInstance } from "../lib/axios.ts"
 import toast from "react-hot-toast"
 import { io } from "socket.io-client"
-import {type AuthStore } from "../interfaces/types.ts"
-const BASE_URL= (import.meta as any).env.MODE === "development" ? "http://localhost:5001": "/"
+import { type AuthStore } from "../interfaces/types.ts"
+import { AxiosError } from "axios"
+const BASE_URL = (import.meta as any).env.MODE === "development" ? "http://localhost:5001" : "/"
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
 
@@ -41,7 +42,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             get().connectSocket();
 
         } catch (error) {
-            toast.error(error.respose.data.message)
+            const axiosError = error as AxiosError<{ message: string }>;
+            toast.error(axiosError.response?.data?.message || "An error occurred");
         }
         finally {
             set({ isSigningUp: false });
@@ -57,7 +59,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             toast.success("Logged out successfully")
             get().disconnectSocket();
         } catch (error) {
-            toast.error(error.response.data.message)
+            const axiosError = error as AxiosError<{ message: string }>;
+            toast.error(axiosError.response?.data?.message || "An error occurred");
 
         }
     },
@@ -71,7 +74,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
             get().connectSocket()
         } catch (error) {
-            toast.error(error.response.data.message)
+            const axiosError = error as AxiosError<{ message: string }>;
+            toast.error(axiosError.response?.data?.message || "An error occurred");
         }
         finally {
             set({ isLogingIn: false });
@@ -85,15 +89,16 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             set({ authUser: res.data });
             toast.success("Profile updated successfully");
         } catch (error) {
-            toast.error(error.response.data.message)
+            const axiosError = error as AxiosError<{ message: string }>;
+            toast.error(axiosError.response?.data?.message || "An error occurred");
         } finally {
             set({ isUpdatingProfile: false });
         }
     },
 
     connectSocket: () => {
-        const {authUser} = get();
-        if(!authUser || get().socket?.connected) return;
+        const { authUser } = get();
+        if (!authUser || get().socket?.connected) return;
 
         const socket = io(BASE_URL, {
             query: {
@@ -101,16 +106,15 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             },
         });
         socket.connect();
-        set({socket: socket})
+        set({ socket: socket })
 
         socket.on("getOnlineUsers", (userIds) => {
-            set({onlineUsers: userIds})
+            set({ onlineUsers: userIds })
         });
-     },
+    },
 
-    disconnectSocket: () => { 
-        console.log("disconnect socket called");
-        if(get().socket?.connected) 
+    disconnectSocket: () => {
+        if (get().socket?.connected)
             get().socket?.disconnect();
     },
 

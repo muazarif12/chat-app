@@ -3,6 +3,7 @@ import toast from "react-hot-toast"
 import { axiosInstance } from "../lib/axios"
 import { useAuthStore } from "./useAuthStore";
 import {type ChatStore } from "../interfaces/types.ts";
+import { AxiosError } from "axios";
 
 
 export const useChatStore = create<ChatStore>((set, get) => ({
@@ -18,7 +19,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             const res = await axiosInstance.get("/messages/users");
             set({ users: res.data });
         } catch (error) {
-            toast.error(error.response.data.message);
+            const axiosError = error as AxiosError<{ message: string }>;
+            toast.error(axiosError.response?.data?.message || "An error occurred");
         } finally {
             set({ isUsersLoading: false });
         }
@@ -32,7 +34,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             set({ messages: res.data });
             console.log("get Messages executed")
         } catch (error) {
-            toast.error(error.response.data.message);
+            const axiosError = error as AxiosError<{ message: string }>;
+            toast.error(axiosError.response?.data?.message || "An error occurred");
         } finally {
             set({ isMessagesLoading: false });
         }
@@ -64,7 +67,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             const res = await axiosInstance.post(`/messages/send/${selectedUser?._id}`, messageData);
             set({ messages: [...messages, res.data] })
         } catch (error) {
-            toast.error(error.response.data.message);
+            const axiosError = error as AxiosError<{ message: string }>;
+            toast.error(axiosError.response?.data?.message || "An error occurred");
         }
     },
     

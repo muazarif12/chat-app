@@ -7,9 +7,9 @@ const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore()
   const [selectedImage, setSelectedImage] = useState("")
 
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     console.log(file); // Debug

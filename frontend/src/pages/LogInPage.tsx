@@ -14,7 +14,7 @@ const LogInPage = () => {
   
   const {login, isLogingIn} = useAuthStore();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
     e.preventDefault();
     login(formData);
